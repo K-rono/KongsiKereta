@@ -4,11 +4,14 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -30,8 +33,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import com.example.kongsikereta.util.PreferencesManager
 import com.example.kongsikereta.util.genders
 
 @Composable
@@ -52,6 +58,7 @@ fun RegisterScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
+            .fillMaxSize()
             .padding(8.dp)
             .verticalScroll(scrollState)
     ) {
@@ -69,6 +76,18 @@ fun RegisterScreen(
                         )
                     }
                 }
+                if(imageUri != null){
+                    Box(modifier = Modifier
+                        .width(100.dp)
+                        .height(100.dp)){
+                        AsyncImage(
+                            model = imageUri,
+                            contentDescription = "Profile picture",
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+                }
+
                 Spacer(modifier = Modifier.height(8.dp))
                 TextField(
                     value = uiState.value.ic,
@@ -146,18 +165,21 @@ fun RegisterScreen(
             Column(modifier = Modifier.padding(8.dp)) {
                 TextField(
                     value = uiState.value.model,
-                    onValueChange = { registerScreenViewModel.updateModel(it) })
+                    onValueChange = { registerScreenViewModel.updateModel(it) },
+                    label = { Text(text = "Model")})
                 Spacer(modifier = Modifier.height(8.dp))
                 TextField(value = uiState.value.capacity.toString(), onValueChange = {
                     val value = it.toIntOrNull()
                     if (value != null) {
                         registerScreenViewModel.updateCapacity(value)
                     }
-                })
+                },
+                    label = { Text(text = "Capacity")})
                 Spacer(modifier = Modifier.height(8.dp))
                 TextField(
                     value = uiState.value.notes,
-                    onValueChange = { registerScreenViewModel.updateNotes(it) })
+                    onValueChange = { registerScreenViewModel.updateNotes(it) },
+                    label = { Text(text = "Extra Features")})
             }
 
         }

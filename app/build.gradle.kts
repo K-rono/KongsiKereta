@@ -53,6 +53,8 @@ android {
 }
 
 dependencies {
+    //coil
+    implementation("io.coil-kt:coil-compose:2.7.0")
     //gson
     implementation("com.google.code.gson:gson:2.11.0")
 

@@ -2,6 +2,7 @@ package com.example.kongsikereta.util
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import com.google.firebase.Firebase
 import com.google.firebase.storage.storage
 import kotlinx.coroutines.tasks.await
@@ -52,12 +53,13 @@ class FirebaseStorageUtil {
         ): File? {
             val storage = Firebase.storage
 
-            val storageRef = storage.reference
+            val storageRef = storage.getReferenceFromUrl(url)
 
             val data = File(context.cacheDir,"$userId.$fileType")
 
             return try{
                 storageRef.getFile(data).await()
+                Log.i("dataFromFirebaseStorage",data.toString())
                 data
             } catch(e : Exception) {
                 e.printStackTrace()

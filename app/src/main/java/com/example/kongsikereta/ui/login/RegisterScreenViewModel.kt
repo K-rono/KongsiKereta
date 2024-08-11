@@ -2,6 +2,7 @@ package com.example.kongsikereta.ui.login
 
 import android.content.Context
 import android.net.Uri
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.kongsikereta.data.UserDriver
@@ -15,7 +16,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class RegisterScreenViewModel @Inject constructor(private val userRepository: UserRepository) : ViewModel() {
+class RegisterScreenViewModel @Inject constructor(private val userRepository: UserRepository) :
+    ViewModel() {
     private val _registerScreenUiState = MutableStateFlow(RegisterScreenUiState())
     val registerScreenUiState = _registerScreenUiState.asStateFlow()
 
@@ -106,8 +108,13 @@ class RegisterScreenViewModel @Inject constructor(private val userRepository: Us
         _imageUri.value = uri
     }
 
-    fun registerUser(context : Context, callback: (Boolean) -> Unit) {
+    fun registerUser(context: Context, callback: (Boolean) -> Unit) {
         val value = _registerScreenUiState.value
+        if (value.ic == "" || value.password == "" || value.phoneNumber == "" || value.email == "" || value.address == "" || value.model == ""||value.capacity == 0){
+            Toast.makeText(context, "Error, Fields Empty", Toast.LENGTH_LONG).show()
+            callback(false)
+            return
+        }
         val userData = UserDriver(
             ic = value.ic,
             password = value.password,
@@ -123,7 +130,11 @@ class RegisterScreenViewModel @Inject constructor(private val userRepository: Us
         )
 
         viewModelScope.launch {
-            _imageUri.value?.let { userRepository.registerUser(it,userData,context) }
+            _imageUri.value?.let {
+                userRepository.registerUser(it, userData, context) { success ->
+                    callback(success)
+                }
+            }
         }
     }
 }
